@@ -1,100 +1,112 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-class Node {
-    int value;
+struct Node {
+    int data;
     Node* next;
     Node* prev;
-public:
-    Node(int value) {
-        this->value = value;
-        this->next = nullptr;
-        this->prev = nullptr;
-    }
-    friend class DublyLinkedList;
 };
 
-
-class DublyLinkedList {
-    Node* head;
-    Node* tail;
-public:
-    DublyLinkedList() {
-        head = nullptr;
-        tail = nullptr;
+Node* split(Node* head) {
+    Node* slow = head;
+    Node* fast = head;
+    
+    while (fast->next && fast->next->next) {
+        slow = slow->next;
+        fast = fast->next->next;
     }
+    Node* temp = slow->next;
+    slow->next = nullptr;
+    return temp;
+}
 
-    // Insert at the end (tail)
-    void InsertAtTail(int value) {
-        Node* new_node = new Node(value);
-        if (!head) {
-            head = new_node;
-            tail = new_node;
+Node* merge(Node* first, Node* second) {
+
+    if (!first) return second;
+    if (!second) return first;
+
+    Node dummy;
+    Node* tail = &dummy;
+    dummy.prev = nullptr;
+
+    while (first && second) {
+        if (first->data < second->data) {
+            tail->next = first;
+            first->prev = tail;
+            first = first->next;
         } else {
-            new_node->prev = tail;
-            tail->next = new_node;
-            tail = new_node;
+            tail->next = second;
+            second->prev = tail;
+            second = second->next;
+        }
+        tail = tail->next;
+    }
+
+    if (first) {
+        tail->next = first;
+        first->prev = tail;
+    } else {
+        tail->next = second;
+        if (second) {
+            second->prev = tail;
         }
     }
 
-    // Display the list
-    void display() {
-        Node* temp = head;
-        while (temp) {
-            cout << temp->value << "->";
-            temp = temp->next;
-        }
-        cout << "nullptr" << endl;
+    return dummy.next;
+}
+
+Node* mergeSort(Node* head) {
+    if (!head || !head->next) {
+        return head;
     }
 
-    // Delete duplicate nodes
-    void DeleteDuplicate() {
-        Node* curr = head;
-        while (curr) {
-            Node* temp = curr->next;
-            while (temp) {
-                if (temp->value == curr->value) {
-                    // Duplicate found, remove it
-                    Node* next = temp->next;
+    Node* second = split(head);
 
-                    if (temp->prev) {
-                        temp->prev->next = temp->next;
-                    }
+    head = mergeSort(head);
+    second = mergeSort(second);
 
-                    if (temp->next) {
-                        temp->next->prev = temp->prev;
-                    }
+    return merge(head, second);
+}
 
-                    if (temp == tail) {
-                        tail = temp->prev; // Update tail if necessary
-                    }
-
-                    delete temp;
-                    temp = next; // Move to the next node
-                } else {
-                    temp = temp->next;
-                }
-            }
-            curr = curr->next;
-        }
+void insert(Node*& head, int data) {
+    Node* newNode = new Node{data, nullptr, nullptr};
+    if (!head) {
+        head = newNode;
+        return;
     }
-};
 
+    Node* temp = head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
 
-int main(int argc, char const *argv[]) {
-    DublyLinkedList dll;
-    dll.InsertAtTail(1);
-    dll.InsertAtTail(2);
-    dll.InsertAtTail(3);
-    dll.InsertAtTail(4);
-    dll.InsertAtTail(3);  // Duplicate
-    dll.InsertAtTail(5);
-    dll.InsertAtTail(2);  // Duplicate
-    dll.display();
+void printList(Node* head) {
+    while (head) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
 
-    dll.DeleteDuplicate();  // Remove duplicates
-    cout << "After deleting duplicates:" << endl;
-    dll.display();
+int main() {
+    Node* head = nullptr;
+
+    insert(head, 10);
+    insert(head, 3);
+    insert(head, 15);
+    insert(head, 8);
+    insert(head, 5);
+
+    cout << "Original List: ";
+    printList(head);
+
+    head = mergeSort(head);
+
+    cout << "Sorted List: ";
+    printList(head);
 
     return 0;
 }
