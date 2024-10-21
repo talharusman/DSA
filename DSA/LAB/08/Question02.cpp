@@ -33,8 +33,6 @@ class Tree {
     void insert(int val) {
         insertNode(root, val);
     }
-
-    // Optional: Function to print the tree in-order for testing
     void inOrderTraversal(TreeNode* node) {
         if (node != NULL) {
             inOrderTraversal(node->left);
@@ -42,13 +40,11 @@ class Tree {
             inOrderTraversal(node->right);
         }
     }
-
-    // Public method to start in-order traversal
     void printInOrder() {
         inOrderTraversal(root);
         std::cout << std::endl;
     }
-    
+
     TreeNode* getRoot(){
         return root;
     }
@@ -64,7 +60,7 @@ void zigzagLevelOrder(TreeNode* root) {
 
     queue<TreeNode*> q;
     q.push(root);
-    bool flag = true; // Flag to control the direction of insertion
+    bool flag = true; 
 
     while (!q.empty()) {
         int size = q.size();
@@ -73,24 +69,20 @@ void zigzagLevelOrder(TreeNode* root) {
         for (int i = 0; i < size; i++) {
             TreeNode* node = q.front();
             q.pop();
-
-            // Insert node value based on the current direction
             if (flag) {
                 level.push_back(node->val);
             } else {
-                level.insert(level.begin(), node->val); // Insert at the beginning
+                level.insert(level.begin(), node->val); 
             }
 
-            // Add child nodes to the queue
             if (node->left) q.push(node->left);
             if (node->right) q.push(node->right);
         }
 
-        // Print the current level
         for (int val : level) {
             cout << val << " ";
         }
-        cout << endl; // New line after each level
+        cout << endl;
         flag = !flag;
     }
 }
