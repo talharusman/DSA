@@ -34,7 +34,6 @@ class Tree {
         insertNode(root, val);
     }
 
-    // Optional: Function to print the tree in-order for testing
     void PreOrderTraversal(Node* node) {
         if (node != NULL) {
             std::cout << node->data << " ";
@@ -42,8 +41,6 @@ class Tree {
             PreOrderTraversal(node->right);
         }
     }
-
-    // Public method to start in-order traversal
     void printpreOrder() {
         PreOrderTraversal(root);
         std::cout << std::endl;
